@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>企业绩效薪酬管理系统</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/table.css">
+    <link rel="stylesheet" href="../css/update.css">
+    <style>
+        .but{
+            height: 30px;
+            line-height: 30px;
+            font-size: 14px;
+            margin: 5px 20px;
+            width: 80px;
+            border: 0;
+            border-radius: 3px;
+            background: #76d4f5;
+            color: white;
+            outline: none;
+        }
+
+        .but:hover{
+            cursor: pointer;
+            border-color: #46c5f2;
+            background: #46c5f2;
+        }
+
+        .updatePerformance .confim-content input{
+            width: 260px;
+            border:1px solid #ccc;
+            outline: none;
+            border-radius: 3px;
+        }
+        .updatePerformance .confim-content button{
+            width: 260px;
+            outline: none;
+            border-radius: 3px;
+        }
+        .updatePerformance .confim-content textarea{
+            size: 16px;
+            padding: 4px;
+            width: 260px;
+            border:1px solid #ccc;
+            height: 100px;
+            outline: none;
+            border-radius: 3px;
+        }
+    </style>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="application/javascript" src="../js/salary.js"></script>
+    <script type="text/javascript">
+        $("input").focus(function(){
+            $(this).css("border-color","#76d4f5")
+        });
+
+        $("input").blur(function(){
+            $(this).css("border-color","#ccc")
+        });
+        $("textarea").focus(function(){
+            $(this).css("border-color","#76d4f5")
+        });
+
+        $("textarea").blur(function(){
+            $(this).css("border-color","#ccc")
+        });
+        $(function () {
+            add(year,month)
+        })
+        function register() {
+            $(".updatePerformance").css("display","block")
+        }
+        function cance() {
+            $(".updatePerformance").css("display","none")
+        }
+        var length = 0
+        function add(syear,smonth) {
+            var umonth = smonth
+            if (smonth<10)
+                umonth = "0"+smonth
+            var sdata = {
+                "phonenum":sessionStorage.getItem("phonenum"),
+                "year":syear,
+                "month":umonth
+            }
+            $.get("getPerformance.action",sdata,function success(data) {
+                var str = ""
+                if (data == ""){
+                    length = 0
+                    str = "<p>占未查询到信息</p>"
+                } else {
+                    length = data.length
+                    for (var i = 0;i < length;i++) {
+                        str = str + "<tr class='cen'> " +
+                            "<td><div>" + i + "</div></td> " +
+                            "<td><div>" + data[i].info + "</div></td> " +
+                            "<td><div>" + data[i].money + "</div></td> ";
+                        if (data[i].status == 0)
+                            str = str + "<td><div>待审核</div></td> ";
+                        else if (data[i].status == 1)
+                            str = str + "<td><div style='color: #19CAAD;'>审核通过</div></td> "
+                        else
+                            str = str + "<td><div style='color: red'>审核未通过</div></td> "
+                        str = str + "</tr>"
+                    }
+                }
+                $("tbody").empty()
+                $("tbody").append(str)
+            })
+        }
+        function registerPerformance(){
+            var info = $("#texta").val()
+            var money = $("input[type='number']").val()
+            if (info == "" || money == "")
+                $("p[text='info']").text("请填写内容")
+            else {
+                var nmonth = month;
+                if (month < 10)
+                    nmonth = "0" + month
+                var ndata = {
+                    "phonenum": sessionStorage.getItem("phonenum"),
+                    "year": year,
+                    "month": nmonth,
+                    "info": info,
+                    "money":money
+                }
+                $.get("setPerformance.action",ndata,function success() {
+                    var str = "<tr class='cen'> " +
+                        "<td><div>" + 0 + "</div></td> " +
+                        "<td><div>" + info + "</div></td> " +
+                        "<td><div>" + money + "</div></td> " +
+                        "<td><div>待审核</div></td> " +
+                        "</tr>"
+                    if (length == 0)
+                        $("tbody").empty()
+                    for (var i = 0;i<length;i++){
+                        var text = $("tbody tr:eq("+i+") td:eq(0) div").text()
+                        $("tbody tr:eq("+i+") td:eq(0) div").text(parseInt(text) + 1)
+                    }
+                    length++
+                    $("tbody").prepend(str)
+                    cance()
+                })
+            }
+        }
+        function yearClick() {
+            monthClick()
+        }
+        function monthClick() {
+            var yearOpt = $("select[name='year']").val()
+            var monthOpt = $("select[name='month']").val()
+            add(yearOpt,monthOpt)
+        }
+    </script>
+</head>
+<body>
+    <div style="margin: 50px 20px">
+        <h2>企业绩效薪酬管理系统</h2>
+        <p>企业绩效薪酬管理系统，具体情况具体分析</p>
+        <hr>
+        <div style="margin: 30px 0px">
+            请选择年份：<select name="year" onchange="yearClick()">
+        </select>
+            请选择月份：<select name="month" onchange="monthClick()">
+        </select>
+            <button class="but" type="button" onclick="register()">申请</button>
+            <table>
+                <thead>
+                <tr class="cen">
+                    <th>序号</th>
+                    <th>信息</th>
+                    <th>薪酬</th>
+                    <th>状态</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="updatePerformance"
+         style="display:none;position: fixed; z-index: 999; top: 0px; left: 0px; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7);">
+        <div class="confim-content" style="margin: 100px auto">
+            <h2 style="text-align: center;margin-bottom: 20px">绩效申请</h2>
+            <div class="cancel" onclick="cance()">X</div>
+            <div style="padding: 0 10px">
+                <p text="info" style="color: red"></p>
+                <textarea id="texta" type="text" name="info" placeholder="请输入绩效内容"></textarea>
+                <input type="number" name="money" placeholder="请输入期望薪酬" maxlength="16">
+                <button class="button" type="button"
+                        style="margin: 20px 73px 10px 0px" onclick="registerPerformance()">确定</button>
+                <button class="button red" type="button" onclick="cance()">取消</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

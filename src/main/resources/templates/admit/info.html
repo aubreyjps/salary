@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>企业绩效薪酬管理系统</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/table.css">
+    <link rel="stylesheet" href="../css/update.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+        body{
+            font-family: PingFangSC-Regular, Verdana, Arial, 微软雅黑, 宋体;
+        }
+        #confim .confim-content input{
+            border: 1px solid #ccc;
+            padding-left: 15px;
+            font-size: 16px;
+            margin: 0 0 8px 0;
+            width: 240px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 3px;
+            outline: none;
+        }
+        #confim .confim-content button{
+            outline: none;
+            width: 88px;
+            margin: 0;
+            border-radius: 3px;
+        }
+    </style>
+    <script type="text/javascript">
+        var num = 0
+        var tData
+        function demo(i) {
+            num = i;
+            console.log(tData[i])
+            $("#confim input[name='vacation']").val(tData[i].salary.vacNum)
+            $("#confim input[name='late']").val(tData[i].salary.lateNum)
+            $("#confim input[name='overtime']").val(tData[i].salary.overNum)
+            $('#confim').css("display", "block");
+        }
+
+        function cance() {
+            $('#confim').css("display", "none");
+        }
+        function updateSal() {
+            var vacNum = $("#confim input[name='vacation']").val()
+            var lateNum = $("#confim input[name='late']").val()
+            var overNum = $("#confim input[name='overtime']").val()
+            if(vacNum=="" || lateNum=="" || overNum == ""){
+                $("#confim p[text='info']").text("请输入数字！")
+            }else if (!isNaN(vacNum)&&!isNaN(lateNum)&&!isNaN(overNum)){
+                var vNum = parseInt(vacNum);
+                var lNum = parseInt(lateNum);
+                var oNum = parseInt(overNum);
+                console.log(vNum+" "+lNum+" "+oNum)
+                $.get("updateSal.action",{
+                    "year":tData[num].salary.year,
+                    "month":tData[num].salary.month,
+                    "phonenum":tData[num].salary.phonenum,
+                    "vacNum":vNum,
+                    "lateNum":lNum,
+                    "overNum":oNum
+                },function success() {
+                    $("tbody tr:eq(" + num + ") td:eq(1) div").text(vNum)
+                    $("tbody tr:eq(" + num + ") td:eq(2) div").text(lNum)
+                    $("tbody tr:eq(" + num + ") td:eq(3) div").text(oNum)
+                    tData[num].salary.vacNum = vNum
+                    tData[num].salary.lateNum = lNum
+                    tData[num].salary.overNum = oNum
+                })
+                cance()
+            }else {
+                $("#confim p[text='info']").text("请输入数字！")
+            }
+        }
+        $(function () {
+            add()
+        })
+        function add() {
+            $.get("getSalary.action",function success(data) {
+                tData = data
+                var str = ""
+                for (var i = 0; i < data.length;i++) {
+                    str = str + "<tr class='cen'> " +
+                        "<td><div>" + data[i].name + "</div></td> " +
+                        "<td><div>" + data[i].salary.vacNum + "</div></td> " +
+                        "<td><div>" + data[i].salary.lateNum + "</div></td> " +
+                        "<td><div>" + data[i].salary.overNum + "</div></td> " +
+                        "<td><div><span onclick='demo("+i+")'>修改</span></div></td>" +
+                        "</tr>"
+                }
+                $("tbody").empty()
+                $("tbody").append(str)
+            })
+        }
+    </script>
+</head>
+<body>
+<div style="margin: 50px 20px">
+    <h2>企业绩效薪酬管理系统</h2>
+    <p>企业绩效薪酬管理系统，具体情况具体分析</p>
+    <hr>
+    <div style="margin: 30px 0px">
+<!--        <select name="classroom">-->
+<!--            <option value="">不选</option>-->
+<!--            <option value="1401" selected>1401</option>-->
+<!--            <option value="1402">1402</option>-->
+<!--            <option value="1403">1403</option>-->
+<!--            <option value="3320">3320</option>-->
+<!--        </select>-->
+<!--        <select name="course">-->
+<!--            <option value="3320">不选</option>-->
+<!--            <option value="1401">数据库</option>-->
+<!--            <option value="1402">java</option>-->
+<!--            <option value="1403">c</option>-->
+<!--        </select>-->
+<!--        <select name="teacher">-->
+<!--            <option value="1401">不选</option>-->
+<!--            <option value="1402">张三</option>-->
+<!--            <option value="1403">李四</option>-->
+<!--            <option value="3320">3320</option>-->
+<!--        </select>-->
+        <table>
+            <thead>
+            <tr class="cen">
+                <th>姓名</th>
+                <th>事假/次</th>
+                <th>迟到/次</th>
+                <th>加班/次</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="cen">
+                <td>
+                    <div>JavaWeb课程</div>
+                </td>
+                <td>
+                    <div>张三</div>
+                </td>
+                <td>
+                    <div>1401</div>
+                </td>
+                <td>
+                    <div>第二节</div>
+                </td>
+                <td>
+                    <span onclick="demo()">修改</span>
+                    <span>删除</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="confim"
+     style="display:none;position: fixed; z-index: 999; top: 0px; left: 0px; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7);">
+    <div class="confim-content" style="margin: 100px auto">
+        <h2 style="text-align: center;margin-bottom: 20px">正在修改<span>张三</span>的信息</h2>
+        <div class="cancel" onclick="cance()">X</div>
+        <div style="padding: 0 10px">
+            <p text="info" style="color: red"></p>
+            <p>请修改事假次数、天</p>
+            <input type="text" name="vacation" placeholder="请输入事假次数、天" maxlength="16">
+            <p>请修改迟到次数、天</p>
+            <input type="text" name="late" placeholder="请输入迟到次数、天" maxlength="16">
+            <p>请修改加班次数、天</p>
+            <input type="text" name="overtime" placeholder="请输入加班次数、天" maxlength="16">
+            <button class="button" type="button"
+                    style="margin: 20px 73px 10px 0px" onclick="updateSal()">确定</button>
+            <button class="button red" type="button" onclick="cance()">取消</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

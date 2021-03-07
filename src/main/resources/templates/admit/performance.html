@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>企业绩效薪酬管理系统</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/table.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var ndata = ""
+        $(function () {
+            add()
+        })
+        function add() {
+            $.get("getPerAndName.action",function success(data) {
+                console.log(data)
+                ndata = data
+                var str = ""
+                if (data == "")
+                    str = "<p>暂未查询到信息</p>"
+                else {
+                    for (var i=0;i<data.length;i++) {
+                        str = str + "<tr class='cen'> " +
+                            "<td><div>" + data[i].name + "</div></td> " +
+                            "<td><div>" + data[i].performance.info + "</div></td> " +
+                            "<td><div>" + data[i].performance.money + "</div></td> " +
+                            "<td><div><span onclick='pass("+i+")' style='margin-right: 8px'>通过</span><span onclick='fal("+i+")'>未通过</span></div></td> " +
+                            "</tr>"
+                    }
+                }
+                $("tbody").empty()
+                $("tbody").append(str)
+            })
+        }
+        function pass(i) {
+            var sdata = {
+                "id":ndata[i].performance.id,
+                "status":1
+            }
+            $.get("updatePer.action",sdata,function success() {
+                $("tbody tr:eq("+i+") td:eq(3) div").empty()
+                $("tbody tr:eq("+i+") td:eq(3) div").append("通过")
+            })
+        }
+
+        function fal(i) {
+            var sdata = {
+                "id":ndata[i].performance.id,
+                "status":2
+            }
+            $.get("updatePer.action",sdata,function success() {
+                $("tbody tr:eq("+i+") td:eq(3) div").empty()
+                $("tbody tr:eq("+i+") td:eq(3) div").append("未通过")
+            })
+        }
+    </script>
+</head>
+<body>
+    <div style="margin: 50px 20px">
+        <h2>企业绩效薪酬管理系统</h2>
+        <p>企业绩效薪酬管理系统，具体情况具体分析</p>
+        <hr>
+        <div style="margin: 30px 0px">
+            <table>
+                <thead>
+                <tr class="cen">
+                    <th>姓名</th>
+                    <th>业绩</th>
+                    <th>期望薪资</th>
+                    <th>审核</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="cen">
+                    <td>
+                        <div>1401</div>
+                    </td>
+                    <td>
+                        <div>吉首大学张家界校区第一教学楼1401</div>
+                    </td>
+                    <td>
+                        <div>xxxxxx</div>
+                    </td>
+                    <td>
+                        <div><span>通过</span><span>不通过</span></div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

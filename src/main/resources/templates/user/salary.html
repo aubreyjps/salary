@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>企业绩效薪酬管理系统</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/table.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="application/javascript" src="../js/salary.js"></script>
+    <script type="application/javascript">
+        function yearClick() {
+            monthClick()
+        }
+
+        function monthClick() {
+            var yearOpt = $("select[name='year']").val()
+            var monthOpt = $("select[name='month']").val()
+            add(yearOpt,monthOpt)
+        }
+
+        $(function () {
+            add(year,month)
+        })
+
+        function add(syear,smonth) {
+            var sdata = {}
+            var bsdata = {}
+            var nmonth = smonth
+            if (smonth < 10)
+                nmonth = "0"+smonth
+            var rdata = {"phonenum":sessionStorage.getItem("phonenum"),
+                "year":syear,
+                "month":nmonth
+            }
+            $.get("getSal.action",rdata,function success(data1) {
+                sdata = data1
+                $.get("/getSalary",{"year":syear,"month":nmonth},function success(data2) {
+                    bsdata = data2
+                    var str = ""
+                    if (bsdata == "" || sdata == "") {
+                        str = "<p>暂未查询到记录</p>"
+                        $("tbody").empty()
+                        $("tbody").append(str)
+                        $("p[text='info']").empty()
+                    }
+                    else {
+                        var sda = {
+                            "phonenum": sessionStorage.getItem("phonenum"),
+                            "year": syear,
+                            "month": nmonth
+                        }
+                        $.get("getPerformance.action", sda, function success(data3) {
+                            var base = bsdata.base
+                            var jixiao = 0
+                            for (var i = 0; i < data3.length; i++)
+                                if (data3[i].status == 1)
+                                    jixiao = jixiao + data3[i].money
+                            var over = sdata.overNum * bsdata.overtime
+                            var vacation = sdata.vacNum * bsdata.vacation
+                            var late = sdata.lateNum * bsdata.late
+                            var total = base + jixiao + over - vacation - late
+                            str = "<tr class='cen'> " +
+                                "<td><div>" + base + "</div></td> " +
+                                "<td><div>" + jixiao + "</div></td> " +
+                                "<td><div>" + over + "</div></td> " +
+                                "<td><div>-" + vacation + "</div></td> " +
+                                "<td><div>-" + late + "</div></td> " +
+                                "<td><div style='color: #19CAAD;'>" + total + "</div></td> ";
+                            $("tbody").empty()
+                            $("tbody").append(str)
+                            var s = "加班加"+bsdata.overtime+"/次，事假扣"+bsdata.vacation+"/次，迟到扣"+bsdata.late+"/次"
+                            $("p[text='info']").text(s)
+                        })
+                    }
+
+                })
+            })
+        }
+
+    </script>
+</head>
+<body>
+<div style="margin: 50px 20px">
+    <h2>工资管理</h2>
+    <p>企业绩效薪酬管理系统，具体情况具体分析</p>
+    <hr>
+    <div style="margin: 30px 0px">
+        请选择年份：<select name="year" onchange="yearClick()">
+<!--        <option value="2021" selected>2021</option>-->
+    </select>
+        请选择月份：<select name="month" onchange="monthClick()">
+    </select>
+        <table>
+            <thead>
+            <tr class="cen">
+                <th>基本工资</th>
+                <th>绩效工资</th>
+                <th>加班工资</th>
+                <th>事假扣款</th>
+                <th>迟到扣款</th>
+                <th>总计</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="cen">
+                <td>
+                    <div>3000</div>
+                </td>
+                <td>
+                    <div>4000</div>
+                </td>
+                <td>
+                    <div>250</div>
+                </td>
+                <td>
+                    <div>150</div>
+                </td>
+                <td>
+                    <div>无</div>
+                </td>
+                <td>
+                    <div>7100</div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p text="info"></p>
+    </div>
+</div>
+</body>
+</html>

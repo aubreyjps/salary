@@ -1,0 +1,71 @@
+#information{
+    width: 1050px;
+    margin: 20px auto;
+    position: relative;
+}
+
+#information .information-content{
+    padding: 0px 20px;
+    background-color: white;
+}
+
+
+#information .user-img{
+    width: 100px;
+    margin: 20px auto;
+}
+
+#information .user-img img{
+    width: 100px;
+    height: 100px;
+}
+
+#information button{
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border: 0;
+    background: #76d4f5;
+    color: white;
+    border-radius: 5px;
+    outline:0 none;
+}
+
+#information button:hover{
+    cursor: pointer;
+    border-color: #46c5f2;
+    background: #46c5f2;
+}
+
+#information h3{
+    margin: 10px 0px;
+}
+
+#information .user-info{
+    margin-top: 20px;
+}
+
+#information p{
+    margin: 10px 0;
+}
+#information p span{
+    position: absolute;
+    left: 100px;
+}
+
+#information p button{
+    position: absolute;
+    left: 650px;
+    width: 80px;
+    height: 28px;
+    line-height: 28px;
+}
+
+#information .user-info:last-child{
+    padding-bottom: 100px;
+}
+
+/*input[type='submit']:hover ,*/input[type='file']:hover{
+    cursor: pointer;
+}

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>企业绩效薪酬管理系统</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/my.css">
+    <link rel="stylesheet" href="css/update.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="application/javascript" src="js/head.js"></script>
+    <script type="text/javascript">
+        var phonenum = sessionStorage.getItem("phonenum")
+        var userData = sessionStorage.getItem(phonenum)
+        var user = JSON.parse(userData)
+        $(function () {
+            if (user.admit == true)
+                $("#information>a").attr("href","admit/admitIndex.html")
+        })
+        function updateSex(value) {
+            if(value != user.sex) {
+                $.get("updateUser.action?phonenum=" + phonenum + "&data=sex&value=" + value)
+                user.sex = value
+                userData = JSON.stringify(user);
+                sessionStorage.setItem(phonenum, userData);
+            }
+        }
+        function update(data) {
+            var value = null;
+            switch (data) {
+                case 'name':
+                    value = prompt('请输入', user.name)
+                    break;
+                case 'email':
+                    value = prompt('请输入', user.email)
+                    break;
+                case 'phone':
+                    value = prompt('请输入', user.phonenum)
+                    break;
+                case 'qq':
+                    value = prompt('请输入', user.qq)
+                    break;
+            }
+            if (value != null) {
+                $.get("updateUser.action?phonenum=" + phonenum + "&data=" + data + "&value=" + value, function(str) {
+                    if (str == '1') {
+                        if (data == 'name')
+                            $(".name").text(value)
+                        $('span[' + data + ']').text(value)
+                        switch (data) {
+                            case 'name':
+                                user.name = value;
+                                break;
+                            case 'email':
+                                user.email = value
+                                break;
+                            case 'phone':
+                                user.phonenum = value
+                                break;
+                            case 'qq':
+                                user.qq = value
+                                break;
+                        }
+                        userData = JSON.stringify(user);
+                        sessionStorage.setItem(phonenum,userData);
+                    }
+                    else
+                        alert("修改失败");
+                })
+            }
+        }
+        function updateOpen(data) {
+            if (data == 'password')
+                $('.updatePass').css("display", "block");
+            else
+                $('.updateImg').css("display", "block");
+        }
+
+        function cance(data) {
+            if (data == 'password')
+                $('.updatePass').css("display", "none");
+            else
+                $('.updateImg').css("display", "none");
+        }
+
+        function updatePass() {
+            var Pass = $('input[name="password"]').val();
+            var newPass = $('input[name="passwordNew"]').val();
+            var p = $('p[text="info"]');
+            if (newPass == "") {
+                p.text("新密码不能为空");
+            }  else if (Pass != newPass) {
+                p.text("两次密码输入不一致");
+            } else {
+                // $.post("/updatePass.action",{"phonenum":phonenum,"password":Pass},success(data, textStatus, jqXHR),dataType)
+                $('input[name="passwordNew"]').val(phonenum)
+                alert($('input[name="passwordNew"]').val())
+                $('.updateP').submit();
+                sessionStorage.clear()
+            }
+
+        }
+        function updateImg() {
+            var file = $(":file")
+            if ((file.val()==""))
+                alert("请选择文件")
+            else {
+                // var phonenum = sessionStorage.getItem("phonenum")
+                $("input[name='phonenum']").val(phonenum);
+                $(".updateImg form").submit()
+                // var userData = sessionStorage.getItem(phonenum)
+                // var user = JSON.parse(userData)
+                var str = file.val().split(".")
+                user.image = "images/" + phonenum + "." + str[1]
+                userData = JSON.stringify(user)
+                sessionStorage.setItem(phonenum,userData);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="title">
+        <div class="title-left" style="padding-left: 20px;font-size: 18px;font-weight: bolder">
+            企业绩效薪酬管理系统
+        </div>
+        <div class="title-right">
+            <a href="my.html"><img src="images/user.png" alt="" class="setting headImg"></a>
+            <span><span class="name">张三</span>员工，你好！</span>
+            <a href="#" th:href="@{/logout}" onclick="logout()"><img src="images/exit.png" class="setting" alt="退出"></a>
+            <span>注销</span>
+        </div>
+    </div>
+
+    <div id="information">
+        <a href="user/userIndex.html"> &lt; 返回</a>
+        <div class="information-content">
+            <h3>个人设置</h3>
+            <div class="user-img">
+                <img src="images/user-100.png" alt="" class="headImg">
+                <div><button onclick="updateOpen('img')">修改头像</button></div>
+            </div>
+            <div class="user-info">
+                <p>姓名：<span name class="name">张三</span><button onclick="update('name')">修改</button></p>
+                <p>性别：<span><input type="radio" name="sex" onclick="updateSex(true)" checked>男 <input type="radio" name="sex" onclick="updateSex(false)">女 </span></p>
+                <p>邮箱：<span email class="email">123123123@qq.com</span><button onclick="update('email')">修改</button></p>
+                <p>QQ：<span qq class="qq">123123123</span><button onclick="update('qq')">修改</button></p>
+            </div>
+            <h3>账号信息</h3>
+            <div class="user-info">
+                <p>手机：<span class="phonenum">12312312311</span>
+<!--                    <button>修改</button>-->
+                </p>
+                <p>密码：<span class="password">*******</span><button onclick="updateOpen('password')">修改</button></p>
+            </div>
+<!--            <h3>学校信息</h3>-->
+<!--            <div class="user-info">-->
+<!--                <p>学校：<span>吉首大学</span></p>-->
+<!--                <p>学校码：<span>123456</span><button>修改</button></p>-->
+<!--            </div>-->
+        </div>
+    </div>
+    <div class="updatePass"
+         style="display:none;position: fixed; z-index: 999; top: 0px; left: 0px; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7);">
+        <div class="confim-content">
+            <h2 style="text-align: center;margin-bottom: 20px">密码修改</h2>
+            <div class="cancel" onclick="cance('password')">X</div>
+            <form class="updateP" action="updateUser.action" th:action="updatePass.action" method="post">
+                <p text="info" style="color: red"></p>
+<!--                <input type="password" name="passwordOld" placeholder="请输入旧密码"-->
+<!--                       style="margin-top: 0px" maxlength="16"> -->
+                <input type="password" name="password" placeholder="请输入新密码" maxlength="16">
+                <input type="password" name="passwordNew" placeholder="请再次输入新密码" maxlength="16">
+                <button class="button" type="button"
+                        style="margin: 20px 70px 10px 0px" onclick="updatePass()">确定</button>
+                <button class="button red" type="button" onclick="cance('password')">取消</button>
+            </form>
+        </div>
+    </div>
+    <div class="updateImg"
+         style="display:none;position: fixed; z-index: 999; top: 0px; left: 0px; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7);">
+        <div class="confim-content">
+            <h2 style="text-align: center;margin-bottom: 20px">头像修改</h2>
+            <div class="cancel" onclick="cance('img')">X</div>
+            <form action="updateImg.action" th:action="@{/imgUpdate}" method="post"
+                  enctype="multipart/form-data">
+                <input type="file" name="file"
+                       accept="image/gif,image/jpeg,image/jpg,image/png" />
+                <input type="text" name="phonenum" style="display: none">
+                <div>
+                    <button class="button" type="button" onclick="updateImg()"
+                           style="width:280px;height:40px;line-height: 40px;" >提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <footer style="padding-left: 20px">
+        <p>@author Aubrey</p>
+    </footer>
+</body>
+</html>

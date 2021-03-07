@@ -1,0 +1,134 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    background-color: #f1f2f7;
+}
+
+a{
+    text-decoration: none;
+}
+
+#nav{
+    position: fixed;
+    /*position: absolute;*/
+    bottom: 0;
+    background-color: #4f5f6f;
+    width: 280px;
+    top: 0;
+    color: #9ca2a8;
+    z-index: 30;
+}
+
+#nav .nav-title{
+    width: 280px;
+    text-align: center;
+    height: 55px;
+    line-height: 55px;
+    color: white;
+    font-family: 'microsoft yahei';
+    border-bottom: 1px solid black;
+    margin-bottom: 10px;
+}
+
+#nav .nav-subtitle{
+    display: block;
+    padding-left: 20px;
+    text-align: left;
+    width: 280px;
+    box-sizing: border-box;
+    height: 55px;
+    line-height: 55px;
+    border: 0;
+    border-bottom: 1px solid black;
+    background-color: transparent;
+    color: #9ca2a8;
+
+}
+#nav .nav-subtitle:hover{
+    cursor: pointer;
+    transition: .8s ease 0s;
+    background-color: #2d363f;
+    color: white;
+}
+
+
+
+#title{
+    height: 55px;
+    background-color: #d7dde4;
+    color: #4f5f6f;
+    font-size: 14px;
+    border-bottom: 5px solid #f0f3f6;
+}
+
+#title h2{
+    height: 55px;
+    line-height: 55px;
+    margin-left: 20px;
+    float: left;
+    font-family: '微软雅黑';
+    color: whitesmoke;
+}
+
+#title .title-right{
+    float: right;
+    height: 55px;
+    line-height: 55px;
+    vertical-align: middle;
+    margin: auto 20px;
+}
+
+#title .title-left{
+    float: left;
+    height: 55px;
+    line-height: 55px;
+    vertical-align: middle;
+    padding-left: 300px;
+}
+
+#title .title-left img:hover{
+    cursor: pointer;
+}
+
+#title .title-right>span{
+    margin-right: 20px;
+}
+
+.setting{
+    vertical-align: middle;
+    text-align: center;
+    width: 30px;
+    height: 30px;
+}
+
+.headImg{
+    border-radius: 50%;
+}
+
+#content{
+    position: absolute;
+    top: 60px;
+    left: 280px;
+    right: 0;
+    bottom: 50px;
+}
+
+iframe{
+    border: 0;
+}
+
+footer {
+    position: fixed;
+    padding: 0 20px 0 300px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    line-height: 50px;
+    background: white;
+    color: #999;
+    font-size: 12px;
+}

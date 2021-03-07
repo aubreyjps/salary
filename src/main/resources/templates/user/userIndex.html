@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>企业绩效薪酬管理系统</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/index.js"></script>
+    <link rel="stylesheet" href="../css/index.css">
+    <script type="application/javascript" src="../js/head.js"></script>
+</head>
+<body>
+    <div id="nav">
+        <div class="nav-title">
+            <span style="font-size: 18px">企业绩效薪酬管理系统-后台</span>
+        </div>
+        <a class="nav-subtitle" href="salary.html" target="right">
+            <span>查看薪酬</span>
+        </a>
+        <a class="nav-subtitle" href="performance.html" target="right">
+            <span>查看绩效</span>
+        </a>
+    </div>
+    <div id="title">
+        <div class="title-left"  onclick="texts()">
+            <img src="../images/page_first.png" alt="" style="vertical-align: middle">
+        </div>
+
+        <div class="title-right">
+            <a href="../my.html"><img src="../images/user.png" alt="" class="setting headImg"></a>
+            <span><span class="name">张三</span>员工，你好！</span>
+            <a href="#" th:href="@{/logout}" onclick="logout()"><img src="../images/exit.png" class="setting" alt="退出"></a>
+            <span>注销</span>
+        </div>
+    </div>
+    <div id="content">
+        <iframe name="right" height="100%" width="100%" src="salary.html">
+
+        </iframe>
+    </div>
+
+    <footer>
+        <p>@author Aubrey</p>
+    </footer>
+</body>
+</html>

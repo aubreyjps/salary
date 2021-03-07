@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>企业绩效薪酬管理系统</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/table.css">
+    <link rel="stylesheet" href="../css/update.css">
+    <style>
+        body{
+            font-family: PingFangSC-Regular, Verdana, Arial, 微软雅黑, 宋体;
+        }
+        .updateSalary .confim-content input{
+            border: 1px solid #ccc;
+            padding-left: 15px;
+            font-size: 16px;
+            margin: 0 0 8px 0;
+            width: 240px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 3px;
+            outline: none;
+        }
+        .updateSalary .confim-content button{
+            outline: none;
+            width: 88px;
+            margin: 0;
+            border-radius: 3px;
+        }
+
+    </style>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="application/javascript" src="../js/salary.js"></script>
+    <script type="application/javascript">
+        var tData
+        $(function () {
+            add(year,month)
+            $("input").focus(function(){
+                $(this).css("border-color","#76d4f5")
+            });
+
+            $("input").blur(function(){
+                $(this).css("border-color","#ccc")
+            });
+        })
+
+        function add(syear,smonth) {
+            var monthStr = smonth
+            if (smonth < 10)
+                monthStr = "0" + smonth
+            $.get("/getSalary?year="+syear+"&month="+monthStr,function success(data) {
+                if (data == "") {
+                    $("tbody").empty()
+                    $("tbody").append("<p>未查询到信息</p>")
+                } else {
+                    tData = data
+                    var str = "<tr class='cen'> " +
+                        "<td><div>" + data.base + "</div></td> " +
+                        "<td><div>" + data.vacation + "</div></td> " +
+                        "<td><div>" + data.late + "</div></td> " +
+                        "<td><div>" + data.overtime + "</div></td> " +
+                        "<td><div class='" + data.year + "'>" + data.year + "</div></td> " +
+                        "<td><div class='" + data.month + "'>" + data.month + "</div></td> ";
+                    if (syear >= year && smonth >= month)
+                        str = str +"<td><div><span onclick='updateSalary(" + data.year + "," + data.month + ")'>修改</span></div></td>" +
+                            "</tr>"
+                    else
+                        str = str +"<td><div>修改</div></td>" +
+                            "</tr>"
+                    $("tbody").empty()
+                    $("tbody").append(str)
+                }
+            })
+        }
+
+        function updateSalary(year,month) {
+            uyear = year;
+            umonth = month;
+            $(".updateSalary").css("display","block")
+            if (Array.isArray(tData)){
+                var i = parseInt(month) - 1
+                if (tData[i].year == year && tData[i].month == month){
+                    $("input[name='base']").val(tData[i].base)
+                    $("input[name='vacation']").val(tData[i].vacation)
+                    $("input[name='late']").val(tData[i].late)
+                    $("input[name='overtime']").val(tData[i].overtime)
+                }
+            } else {
+                $("input[name='base']").val(tData.base)
+                $("input[name='vacation']").val(tData.vacation)
+                $("input[name='late']").val(tData.late)
+                $("input[name='overtime']").val(tData.overtime)
+            }
+        }
+
+        function yearClick() {
+            monthClick()
+        }
+
+        function monthClick() {
+            var yearOpt = $("select[name='year']").val()
+            var monthOpt = $("select[name='month']").val()
+            if (monthOpt == "no") {
+                $.get("/getDataYear?year=" + yearOpt, function success(data) {
+                    if (data == []) {
+                        $("tbody").empty()
+                        $("tbody").append("<p>未查询到信息</p>")
+                    } else {
+                        var str = ""
+                        tData = data
+                        for (var i = 0; i < 12; i++) {
+                            str = str + "<tr class='cen'> " +
+                                "<td><div>" + data[i].base + "</div></td> " +
+                                "<td><div>" + data[i].vacation + "</div></td> " +
+                                "<td><div>" + data[i].late + "</div></td> " +
+                                "<td><div>" + data[i].overtime + "</div></td> " +
+                                "<td><div class='" + data[i].year + "'>" + data[i].year + "</div></td> " +
+                                "<td><div class='" + data[i].month + "'>" + data[i].month + "</div></td> ";
+                            if (yearOpt >= year && data[i].month >= month)
+                                str = str +"<td><div><span onclick='updateSalary(" + data[i].year + "," + data[i].month + ")'>修改</span></div></td>" +
+                                    "</tr>"
+                            else
+                                str = str +"<td><div>修改</div></td>" +
+                                    "</tr>"
+                        }
+                        $("tbody").empty()
+                        $("tbody").append(str)
+                    }
+                })
+            }else {
+                add(yearOpt,monthOpt)
+            }
+        }
+        function cance() {
+            $(".updateSalary").css("display","none")
+        }
+        var uyear,umonth;
+        function updateSal() {
+            var base = $("input[name='base']").val()
+            var vacation = $("input[name='vacation']").val()
+            var late = $("input[name='late']").val()
+            var overtime = $("input[name='overtime']").val()
+            $.get("updateSalary.action",{"year":uyear,"month":umonth,"base":base,"vacation":vacation,"late":late,"overtime":overtime},function success(data) {
+                if (Array.isArray(tData)) {
+                    var mon = parseInt(umonth) - 1
+                    $("tbody tr:eq(" + mon + ") td:eq(0) div").text(base)
+                    $("tbody tr:eq(" + mon + ") td:eq(1) div").text(vacation)
+                    $("tbody tr:eq(" + mon + ") td:eq(2) div").text(late)
+                    $("tbody tr:eq(" + mon + ") td:eq(3) div").text(overtime)
+                }else {
+                    $("tbody tr td:eq(0) div").text(base)
+                    $("tbody tr td:eq(1) div").text(vacation)
+                    $("tbody tr td:eq(2) div").text(late)
+                    $("tbody tr td:eq(3) div").text(overtime)
+                }
+                cance()
+            })
+        }
+    </script>
+</head>
+<body>
+    <div style="margin: 50px 20px">
+        <h2>企业绩效薪酬管理系统</h2>
+        <p>企业绩效薪酬管理系统，具体情况具体分析</p>
+        <hr>
+        <div style="margin: 30px 0px">
+            请选择年份：<select name="year" onchange="yearClick()">
+        </select>
+            请选择月份：<select name="month" onchange="monthClick()">
+            <option value="no">不选</option>
+        </select>
+            <table>
+                <thead>
+                <tr class="cen">
+                    <th>基本工资</th>
+                    <th>请假扣款/天</th>
+                    <th>迟到扣款/天</th>
+                    <th>加班加薪/天</th>
+                    <th>年份</th>
+                    <th>月份</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="updateSalary"
+         style="display:none;position: fixed; z-index: 999; top: 0px; left: 0px; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7);">
+        <div class="confim-content" style="margin: 100px auto">
+            <h2 style="text-align: center;margin-bottom: 20px">工资修改</h2>
+            <div class="cancel" onclick="cance()">X</div>
+            <div style="padding: 0 10px">
+                <p text="info" style="color: red"></p>
+                <p>请修改基本工资</p>
+                <input type="text" name="base" placeholder="请输入基本工资" maxlength="16">
+                <p>请修改事假扣款/天</p>
+                <input type="text" name="vacation" placeholder="请输入事假扣款/天" maxlength="16">
+                <p>请修改迟到扣款/天</p>
+                <input type="text" name="late" placeholder="请输入迟到扣款/天" maxlength="16">
+                <p>请修改加班加薪/天</p>
+                <input type="text" name="overtime" placeholder="请输入加班加薪/天" maxlength="16">
+                <button class="button" type="button"
+                        style="margin: 20px 73px 10px 0px" onclick="updateSal()">确定</button>
+                <button class="button red" type="button" onclick="cance()">取消</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

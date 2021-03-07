@@ -1,0 +1,60 @@
+.confim-content {
+    position: relative;
+    background-color: white;
+    border-radius: 2px;
+    box-shadow: 0 0 10px 0 rgba(0, 33, 79, 0.11);
+    width: 280px;
+    margin: 150px auto;
+    padding: 20px;
+    font-size: 18px;
+}
+
+.cancel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 18px;
+}
+
+.cancel:hover {
+    cursor: pointer;
+}
+
+.confim-content select {
+    height: 20px;
+    padding-left: 5px;
+}
+
+.confim-content /*form>*/input{
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    padding: 2px;
+    margin: 20px 0;
+    width: 280px;
+}
+
+.confim-content .button{
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    margin: 20px 0;
+    width: 280px;
+    border: 0;
+    background: #76d4f5;
+    color: white;
+}
+
+.confim-content .button:hover{
+    cursor: pointer;
+    border-color: #46c5f2;
+    background: #46c5f2;
+}
+
+.confim-content .red {
+    background: #ff4444;
+}
+
+.confim-content .red:hover {
+    background: #ff1111;
+}
